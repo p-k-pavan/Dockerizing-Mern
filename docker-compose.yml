@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image:  mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-stack
+    volumes:
+      - mongo-data:/data/db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - mern-stack
+    environment:
+      REACT_APP_API_URL: http://backend:5050
+
+  backend:
+    build: ./backend
+    ports:
+      - "5050:5050"
+    networks:
+      - mern-stack
+    environment:
+      MONGO_URL: mongodb://mongo:27017/mydatabase
+    depends_on:
+      - mongo
+
+networks:
+  mern-stack:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local  
+
